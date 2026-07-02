@@ -1,0 +1,3968 @@
+# SQL Window Functions (OVER, PARTITION BY, ORDER BY, ROWS/RANGE)
+## FAANG Interview Guide using LeetCode SQL
+
+> Complete interview preparation guide focused entirely on solving LeetCode SQL Window Function problems using real interview patterns from Amazon, Google, Meta, Microsoft, Apple, Uber, Airbnb, LinkedIn and Oracle.
+
+---
+
+# Table of Contents
+
+- [Why This Guide](#why-this-guide)
+- [Question 1 — Rank Scores (LeetCode 178)](#question-1--rank-scores-leetcode-178)
+- [Question 2 — Department Top Three Salaries (LeetCode 185)](#question-2--department-top-three-salaries-leetcode-185)
+
+---
+
+# Why This Guide
+
+Window Functions are among the **highest ROI SQL topics** for software engineering interviews.
+
+Almost every major company asks at least one problem involving:
+
+- Ranking
+- Running totals
+- Previous/Next rows
+- Top K per group
+- Moving averages
+- Gap & Island
+- Event timeline analysis
+
+Interviewers intentionally choose Window Function problems because they reveal whether candidates truly understand SQL execution order rather than memorizing syntax.
+
+Instead of learning syntax independently, every concept in this guide is learned by solving actual LeetCode problems.
+
+---
+
+# Question 1 — Rank Scores (LeetCode 178)
+
+**Difficulty**
+
+Easy
+
+**Companies**
+
+- Amazon
+- Google
+- Microsoft
+- Apple
+- Bloomberg
+- Oracle
+
+**Interview Topics**
+
+- OVER()
+- ORDER BY
+- DENSE_RANK()
+- Ranking
+- Duplicate Handling
+
+---
+
+## Problem
+
+Table:
+
+```text
+Scores
++----+-------+
+| id | score |
++----+-------+
+|1   |3.50   |
+|2   |3.65   |
+|3   |4.00   |
+|4   |3.85   |
+|5   |4.00   |
+|6   |3.65   |
++----+-------+
+```
+
+Return
+
+```text
++-------+------+
+|score  |rank  |
++-------+------+
+|4.00   |1     |
+|4.00   |1     |
+|3.85   |2     |
+|3.65   |3     |
+|3.65   |3     |
+|3.50   |4     |
+```
+
+Notice
+
+Equal scores receive the same rank.
+
+There are **no gaps**.
+
+---
+
+# First Thought
+
+Many beginners immediately think:
+
+```sql
+GROUP BY score
+```
+
+This loses duplicate rows.
+
+Interviewers intentionally expect you to preserve every record while assigning rankings.
+
+Window Functions solve exactly this problem.
+
+---
+
+# Step 1 — Sort the Scores
+
+```text
+4.00
+4.00
+3.85
+3.65
+3.65
+3.50
+```
+
+---
+
+# Step 2 — Assign Ranks
+
+Since equal values receive identical rankings,
+
+```text
+4.00 -> 1
+4.00 -> 1
+
+3.85 -> 2
+
+3.65 -> 3
+3.65 -> 3
+
+3.50 -> 4
+```
+
+Notice rank 2 is immediately followed by rank 3.
+
+No skipped values.
+
+This behavior matches
+
+```text
+DENSE_RANK()
+```
+
+---
+
+# Understanding OVER()
+
+The OVER clause tells SQL
+
+> "Compute this function without collapsing rows."
+
+Without OVER,
+
+Aggregation reduces rows.
+
+Example
+
+```sql
+SELECT MAX(score)
+FROM Scores;
+```
+
+Output
+
+```text
+4.00
+```
+
+Only one row remains.
+
+Window Functions keep every row alive.
+
+---
+
+# Visualization
+
+Original table
+
+```text
++----+-------+
+|id  |score  |
++----+-------+
+|1   |3.50   |
+|2   |3.65   |
+|3   |4.00   |
+|4   |3.85   |
+|5   |4.00   |
+|6   |3.65   |
+```
+
+Window Operation
+
+```text
+OVER(
+    ORDER BY score DESC
+)
+```
+
+becomes
+
+```text
+4.00 → Rank 1
+
+4.00 → Rank 1
+
+3.85 → Rank 2
+
+3.65 → Rank 3
+
+3.65 → Rank 3
+
+3.50 → Rank 4
+```
+
+Rows never disappear.
+
+---
+
+# Solution
+
+```sql
+SELECT
+    score,
+    DENSE_RANK() OVER (
+        ORDER BY score DESC
+    ) AS rank
+FROM Scores;
+```
+
+---
+
+# Execution Trace
+
+### Initial
+
+```text
+3.50
+3.65
+4.00
+3.85
+4.00
+3.65
+```
+
+↓
+
+Sort Descending
+
+```text
+4.00
+4.00
+3.85
+3.65
+3.65
+3.50
+```
+
+↓
+
+Assign Dense Rank
+
+```text
+4.00 → 1
+
+4.00 → 1
+
+3.85 → 2
+
+3.65 → 3
+
+3.65 → 3
+
+3.50 → 4
+```
+
+---
+
+# Why DENSE_RANK?
+
+Compare all ranking functions.
+
+Input
+
+```text
+100
+100
+95
+90
+90
+80
+```
+
+## ROW_NUMBER()
+
+```text
+100 -> 1
+100 -> 2
+95  -> 3
+90  -> 4
+90  -> 5
+80  -> 6
+```
+
+Duplicates are ignored.
+
+Every row gets a unique number.
+
+---
+
+## RANK()
+
+```text
+100 -> 1
+100 -> 1
+95  -> 3
+90  -> 4
+90  -> 4
+80  -> 6
+```
+
+Notice
+
+Rank 2 disappears.
+
+Ranks have gaps.
+
+---
+
+## DENSE_RANK()
+
+```text
+100 -> 1
+100 -> 1
+95  -> 2
+90  -> 3
+90  -> 3
+80  -> 4
+```
+
+Continuous rankings.
+
+Exactly what LeetCode expects.
+
+---
+
+# Common Interview Trap
+
+Candidate writes
+
+```sql
+ROW_NUMBER()
+```
+
+Looks correct until duplicate scores appear.
+
+Hidden test cases fail.
+
+---
+
+# Time Complexity
+
+Sorting dominates.
+
+```text
+O(N log N)
+```
+
+---
+
+# LLM-Proof Variations
+
+Interviewers often modify the problem.
+
+Variation 1
+
+Return top 5 unique scores.
+
+Solution
+
+```sql
+WITH Ranked AS
+(
+SELECT *,
+       DENSE_RANK() OVER(
+           ORDER BY score DESC
+       ) r
+FROM Scores
+)
+
+SELECT *
+FROM Ranked
+WHERE r<=5;
+```
+
+---
+
+Variation 2
+
+Return bottom 10 scores.
+
+Simply reverse ordering.
+
+```sql
+ORDER BY score ASC
+```
+
+---
+
+Variation 3
+
+Rank inside each game.
+
+Now introduce PARTITION BY.
+
+```sql
+DENSE_RANK() OVER(
+PARTITION BY game_id
+ORDER BY score DESC
+)
+```
+
+---
+
+# Interview Takeaways
+
+✓ OVER keeps rows.
+
+✓ ORDER BY determines ranking order.
+
+✓ DENSE_RANK handles duplicates.
+
+✓ Never use GROUP BY for ranking.
+
+---
+
+---
+
+# Question 2 — Department Top Three Salaries (LeetCode 185)
+
+**Difficulty**
+
+Hard
+
+**Companies**
+
+- Amazon ⭐⭐⭐⭐⭐
+- Google
+- Meta
+- Microsoft
+- Apple
+- Salesforce
+- LinkedIn
+
+**Topics**
+
+- PARTITION BY
+- DENSE_RANK
+- Top K Per Group
+- Multiple Tables
+- Joins
+- Window Functions
+
+This is one of the most frequently asked Window Function interview questions.
+
+---
+
+# Tables
+
+Employee
+
+```text
++----+--------+--------+--------------+
+|id  |name    |salary  |departmentId  |
++----+--------+--------+--------------+
+|1   |Joe     |85000   |1             |
+|2   |Henry   |80000   |2             |
+|3   |Sam     |60000   |2             |
+|4   |Max     |90000   |1             |
+|5   |Janet   |69000   |1             |
+|6   |Randy   |85000   |1             |
+|7   |Will    |70000   |1             |
+```
+
+Department
+
+```text
++----+-----------+
+|id  |name       |
++----+-----------+
+|1   |IT         |
+|2   |Sales      |
+```
+
+---
+
+# Goal
+
+Return
+
+Top three salaries
+
+inside
+
+each department.
+
+Notice
+
+Each department is ranked independently.
+
+---
+
+# Why GROUP BY Doesn't Work
+
+Many candidates attempt
+
+```sql
+GROUP BY departmentId
+```
+
+Problem
+
+You lose employee names.
+
+Need every employee.
+
+Need rankings.
+
+Need partitioned ranking.
+
+---
+
+# Think Like the Interviewer
+
+Instead of asking
+
+> Highest salary overall?
+
+The question asks
+
+> Highest salary inside each department.
+
+This immediately suggests
+
+```
+PARTITION BY department
+```
+
+---
+
+# Understanding PARTITION BY
+
+Imagine SQL divides the table.
+
+Original
+
+```text
+Entire Employee Table
+```
+
+↓
+
+Partition
+
+```text
+IT
+
+90000
+
+85000
+
+85000
+
+70000
+
+69000
+```
+
+Another partition
+
+```text
+Sales
+
+80000
+
+60000
+```
+
+Each partition behaves like an independent mini-table.
+
+Ranking restarts from 1.
+
+---
+
+# Visual Walkthrough
+
+Employee
+
+```text
+IT
+
+Max      90000
+
+Joe      85000
+
+Randy    85000
+
+Will     70000
+
+Janet    69000
+```
+
+Ranking
+
+```text
+90000 → Rank 1
+
+85000 → Rank 2
+
+85000 → Rank 2
+
+70000 → Rank 3
+
+69000 → Rank 4
+```
+
+Sales
+
+```text
+Henry 80000
+
+Sam   60000
+```
+
+Ranking
+
+```text
+80000 → Rank 1
+
+60000 → Rank 2
+```
+
+Notice
+
+The ranking restarts.
+
+This is PARTITION BY.
+
+---
+
+# Window Function
+
+```sql
+DENSE_RANK()
+OVER(
+PARTITION BY departmentId
+ORDER BY salary DESC
+)
+```
+
+Read it like English.
+
+> For each department,
+>
+> sort salaries descending,
+>
+> assign dense rankings.
+
+---
+
+# Complete Solution
+
+```sql
+WITH RankedEmployees AS
+(
+SELECT
+    e.name AS Employee,
+    e.salary,
+    d.name AS Department,
+
+    DENSE_RANK() OVER(
+        PARTITION BY e.departmentId
+        ORDER BY salary DESC
+    ) AS salary_rank
+
+FROM Employee e
+JOIN Department d
+
+ON e.departmentId=d.id
+)
+
+SELECT
+Department,
+Employee,
+salary
+FROM RankedEmployees
+
+WHERE salary_rank<=3;
+```
+
+---
+
+# Execution Trace
+
+Before Window Function
+
+```text
+IT
+
+90000
+
+85000
+
+85000
+
+70000
+
+69000
+```
+
+↓
+
+Window
+
+```text
+90000 → 1
+
+85000 → 2
+
+85000 → 2
+
+70000 → 3
+
+69000 → 4
+```
+
+↓
+
+Filter
+
+```text
+WHERE salary_rank<=3
+```
+
+Final
+
+```text
+90000
+
+85000
+
+85000
+
+70000
+```
+
+---
+
+# Why DENSE_RANK Instead of ROW_NUMBER?
+
+Suppose
+
+```text
+90000
+
+85000
+
+85000
+
+70000
+```
+
+Need top three salaries.
+
+ROW_NUMBER
+
+```text
+90000 →1
+
+85000 →2
+
+85000 →3
+
+70000 →4
+```
+
+Will incorrectly remove
+
+70000.
+
+Because duplicate salaries consumed ranking positions.
+
+---
+
+Using DENSE_RANK
+
+```text
+90000 →1
+
+85000 →2
+
+85000 →2
+
+70000 →3
+```
+
+Correct.
+
+---
+
+# Interview Follow-ups
+
+### Top Five Salaries
+
+```sql
+WHERE salary_rank<=5
+```
+
+---
+
+### Lowest Three Salaries
+
+```sql
+ORDER BY salary ASC
+```
+
+---
+
+### Highest Salary Per Department
+
+```sql
+WHERE salary_rank=1
+```
+
+---
+
+### Second Highest Salary
+
+```sql
+WHERE salary_rank=2
+```
+
+---
+
+### Top Employee in Every Branch
+
+Replace
+
+```text
+departmentId
+```
+
+with
+
+```text
+branchId
+```
+
+Exactly the same pattern.
+
+---
+
+# Common Mistakes
+
+### Mistake 1
+
+Using
+
+```sql
+LIMIT 3
+```
+
+Returns only three rows overall.
+
+Not three rows per department.
+
+---
+
+### Mistake 2
+
+Using GROUP BY
+
+Employee names disappear.
+
+---
+
+### Mistake 3
+
+Using ROW_NUMBER
+
+Fails duplicate salary cases.
+
+---
+
+# Complexity
+
+Sorting inside each partition dominates.
+
+```text
+Time
+
+O(N log N)
+```
+
+```text
+Space
+
+O(N)
+```
+
+---
+
+# Pattern Learned
+
+Whenever you read
+
+> Top K **within each category**
+
+Immediately think
+
+```sql
+DENSE_RANK()
+
+PARTITION BY
+
+ORDER BY
+```
+
+This single pattern solves dozens of Amazon, Google, Meta, and Microsoft SQL interview questions.
+
+---
+
+# Question 3 — Consecutive Numbers (LeetCode 180)
+
+**Difficulty**
+
+Medium
+
+**Companies**
+
+- Amazon ⭐⭐⭐⭐⭐
+- Meta ⭐⭐⭐⭐
+- Microsoft ⭐⭐⭐⭐
+- Google ⭐⭐⭐
+- Apple
+- Uber
+- Oracle
+
+**Topics Covered**
+
+- `LAG()`
+- `LEAD()`
+- `OVER()`
+- `ORDER BY`
+- Previous/Next Row Comparison
+- Event Stream Analysis
+
+This is one of the most common interview questions that introduces **window functions for comparing adjacent rows** instead of ranking.
+
+---
+
+# Problem
+
+Table
+
+```text
+Logs
++----+-----+
+| id | num |
++----+-----+
+| 1  | 1   |
+| 2  | 1   |
+| 3  | 1   |
+| 4  | 2   |
+| 5  | 1   |
+| 6  | 2   |
+| 7  | 2   |
++----+-----+
+```
+
+Return all numbers that appear at least **three consecutive times**.
+
+Expected Output
+
+```text
++-----------------+
+| ConsecutiveNums |
++-----------------+
+|       1         |
++-----------------+
+```
+
+---
+
+# First Observation
+
+Notice the keyword
+
+> **consecutive**
+
+Not
+
+> appears three times.
+
+These are different.
+
+Example
+
+```text
+1
+2
+1
+1
+2
+1
+```
+
+Number `1` appears four times.
+
+But never appears three times consecutively.
+
+So the answer is empty.
+
+---
+
+# Naive Approach
+
+A common beginner solution is
+
+```sql
+GROUP BY num
+HAVING COUNT(*) >= 3
+```
+
+This counts total occurrences.
+
+It completely ignores order.
+
+Hidden test cases fail.
+
+---
+
+# Correct Thinking
+
+To determine whether rows are consecutive, we need to compare a row with its neighboring rows.
+
+Window functions are designed exactly for this.
+
+---
+
+# Understanding LAG()
+
+Suppose we have
+
+```text
+id   num
+
+1     1
+
+2     1
+
+3     1
+
+4     2
+
+5     1
+```
+
+Running
+
+```sql
+LAG(num)
+OVER(
+ORDER BY id
+)
+```
+
+produces
+
+```text
+id   num   previous
+
+1     1      NULL
+
+2     1       1
+
+3     1       1
+
+4     2       1
+
+5     1       2
+```
+
+Each row now "knows" its previous value.
+
+---
+
+# Understanding LEAD()
+
+Similarly
+
+```sql
+LEAD(num)
+OVER(
+ORDER BY id
+)
+```
+
+produces
+
+```text
+id   num   next
+
+1     1      1
+
+2     1      1
+
+3     1      2
+
+4     2      1
+
+5     1     NULL
+```
+
+Now every row knows its next value.
+
+---
+
+# Visualization
+
+Original
+
+```text
+1
+
+1
+
+1
+
+2
+
+1
+```
+
+Window View
+
+```text
+Previous   Current   Next
+
+NULL          1        1
+
+1             1        1
+
+1             1        2
+
+1             2        1
+
+2             1      NULL
+```
+
+Notice the middle row
+
+```text
+1
+
+1
+
+1
+```
+
+Previous
+
+Current
+
+Next
+
+all equal.
+
+Therefore,
+
+```text
+Current Number = Answer
+```
+
+---
+
+# Solution
+
+```sql
+SELECT DISTINCT
+    num AS ConsecutiveNums
+FROM
+(
+    SELECT
+        num,
+
+        LAG(num) OVER(
+            ORDER BY id
+        ) AS prev_num,
+
+        LEAD(num) OVER(
+            ORDER BY id
+        ) AS next_num
+
+    FROM Logs
+
+) t
+
+WHERE
+
+num = prev_num
+
+AND
+
+num = next_num;
+```
+
+---
+
+# Execution Trace
+
+Input
+
+```text
+id
+
+1
+
+2
+
+3
+
+4
+
+5
+```
+
+↓
+
+Window Functions
+
+```text
+id   prev   curr   next
+
+1    NULL    1      1
+
+2      1     1      1
+
+3      1     1      2
+
+4      1     2      1
+
+5      2     1    NULL
+```
+
+↓
+
+Filter
+
+```text
+curr = prev
+
+AND
+
+curr = next
+```
+
+↓
+
+Output
+
+```text
+1
+```
+
+---
+
+# Why DISTINCT?
+
+Suppose
+
+```text
+5
+
+5
+
+5
+
+5
+
+5
+```
+
+The middle three rows satisfy the condition.
+
+Without
+
+```sql
+DISTINCT
+```
+
+Output becomes
+
+```text
+5
+
+5
+
+5
+```
+
+Expected
+
+```text
+5
+```
+
+---
+
+# Alternative Solution
+
+Another approach
+
+```sql
+SELECT DISTINCT l1.num
+FROM Logs l1
+JOIN Logs l2
+ON l1.id=l2.id-1
+JOIN Logs l3
+ON l2.id=l3.id-1
+WHERE
+
+l1.num=l2.num
+
+AND
+
+l2.num=l3.num;
+```
+
+Works.
+
+But interviewers generally prefer the Window Function solution because
+
+- simpler
+- more scalable
+- easier to extend
+- demonstrates knowledge of modern SQL
+
+---
+
+# LLM-Proof Variations
+
+## Variation 1
+
+Find numbers appearing **4 consecutive times**.
+
+Hint
+
+Use multiple
+
+```text
+LAG()
+
+LEAD()
+```
+
+or compute streaks using Gap-and-Island (covered later).
+
+---
+
+## Variation 2
+
+Find users logging in 5 consecutive days.
+
+Replace
+
+```text
+num
+```
+
+with
+
+```text
+user_id
+```
+
+Replace
+
+```text
+id
+```
+
+with
+
+```text
+login_date
+```
+
+Same pattern.
+
+---
+
+## Variation 3
+
+Detect three consecutive failed transactions.
+
+Replace
+
+```text
+num
+```
+
+with
+
+```text
+status='FAILED'
+```
+
+Again identical logic.
+
+---
+
+# Interview Takeaways
+
+✓ `LAG()` accesses previous rows.
+
+✓ `LEAD()` accesses future rows.
+
+✓ Window functions preserve every row.
+
+✓ Perfect for adjacent-row comparisons.
+
+✓ Avoid self joins whenever a window function provides the same information more clearly.
+
+---
+
+---
+
+# Question 4 — Nth Highest Salary (LeetCode 177)
+
+**Difficulty**
+
+Medium
+
+**Companies**
+
+- Amazon ⭐⭐⭐⭐⭐
+- Google ⭐⭐⭐⭐
+- Microsoft ⭐⭐⭐⭐
+- Apple ⭐⭐⭐
+- Meta ⭐⭐⭐
+- Oracle
+
+**Topics Covered**
+
+- `DENSE_RANK()`
+- `PARTITION BY` (generalization)
+- Ranking
+- Duplicate Handling
+- Top-N Queries
+
+Although the original LeetCode problem is implemented as a SQL function, interviewers usually ask the underlying ranking problem directly.
+
+---
+
+# Problem
+
+Table
+
+```text
+Employee
+
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+```
+
+Find the **Nth highest distinct salary**.
+
+Example
+
+```
+N = 2
+```
+
+Output
+
+```text
+200
+```
+
+---
+
+# Hidden Catch
+
+The problem says
+
+> distinct salary
+
+Suppose
+
+```text
+500
+
+500
+
+400
+
+300
+```
+
+Second highest distinct salary
+
+is
+
+```text
+400
+```
+
+Not
+
+```text
+500
+```
+
+---
+
+# Which Ranking Function?
+
+Compare
+
+```text
+500
+
+500
+
+400
+
+300
+```
+
+---
+
+## ROW_NUMBER()
+
+```text
+500 → 1
+
+500 → 2
+
+400 → 3
+
+300 → 4
+```
+
+Second highest becomes
+
+```text
+500
+```
+
+Wrong.
+
+---
+
+## RANK()
+
+```text
+500 → 1
+
+500 → 1
+
+400 → 3
+```
+
+Second rank disappears.
+
+Also incorrect.
+
+---
+
+## DENSE_RANK()
+
+```text
+500 → 1
+
+500 → 1
+
+400 → 2
+
+300 → 3
+```
+
+Exactly what we need.
+
+---
+
+# Solution
+
+```sql
+WITH RankedSalary AS
+(
+SELECT
+
+salary,
+
+DENSE_RANK() OVER(
+
+ORDER BY salary DESC
+
+) AS salary_rank
+
+FROM Employee
+)
+
+SELECT
+
+salary
+
+FROM RankedSalary
+
+WHERE salary_rank = N;
+```
+
+(Replace `N` with the required rank or parameter in interview settings.)
+
+---
+
+# Execution Trace
+
+Input
+
+```text
+500
+
+500
+
+400
+
+300
+```
+
+↓
+
+Window
+
+```text
+500 → 1
+
+500 → 1
+
+400 → 2
+
+300 → 3
+```
+
+↓
+
+Filter
+
+```sql
+WHERE salary_rank = 2
+```
+
+↓
+
+Output
+
+```text
+400
+```
+
+---
+
+# Why Not LIMIT?
+
+Candidates often write
+
+```sql
+SELECT salary
+
+FROM Employee
+
+ORDER BY salary DESC
+
+LIMIT 1 OFFSET 1;
+```
+
+Fails when duplicates exist.
+
+Example
+
+```text
+500
+
+500
+
+400
+```
+
+Offset returns
+
+```text
+500
+```
+
+Expected
+
+```text
+400
+```
+
+---
+
+# LLM-Proof Variations
+
+### Variation 1
+
+Return the
+
+- 5th highest salary
+
+Simply filter
+
+```sql
+WHERE salary_rank = 5
+```
+
+---
+
+### Variation 2
+
+Return Top K salaries.
+
+```sql
+WHERE salary_rank <= K
+```
+
+---
+
+### Variation 3
+
+Return the third highest salary in every department.
+
+```sql
+DENSE_RANK()
+
+OVER(
+
+PARTITION BY department_id
+
+ORDER BY salary DESC
+
+)
+```
+
+Now combine ranking with partitioning.
+
+---
+
+### Variation 4
+
+Return employees earning one of the top two distinct salaries.
+
+```sql
+WHERE salary_rank <= 2
+```
+
+---
+
+# Complexity
+
+Sorting dominates.
+
+```text
+Time
+
+O(N log N)
+```
+
+```text
+Space
+
+O(N)
+```
+
+---
+
+# Interview Takeaways
+
+✓ "Distinct" almost always suggests `DENSE_RANK()`.
+
+✓ `LIMIT` + `OFFSET` breaks with duplicates.
+
+✓ Window functions make Top-N queries concise and extensible.
+
+✓ The same ranking template solves dozens of interview problems involving salaries, scores, revenue, and leaderboards.
+
+---
+
+---
+
+# Question 5 — Restaurant Growth (LeetCode 1321)
+
+**Difficulty**
+
+Hard
+
+**Companies**
+
+- Amazon ⭐⭐⭐⭐⭐
+- Google ⭐⭐⭐⭐
+- Meta ⭐⭐⭐⭐
+- Microsoft ⭐⭐⭐⭐
+- Apple ⭐⭐⭐
+- Airbnb
+- Uber
+
+**Topics Covered**
+
+- `OVER()`
+- `ORDER BY`
+- `ROWS BETWEEN`
+- Running Window
+- Moving Average
+- Sliding Window
+- Frame Specification
+
+This problem introduces one of the most important interview topics that many candidates overlook:
+
+> **Window Frames**
+
+Most people know `OVER()` and `PARTITION BY`.
+
+Far fewer understand how SQL decides **which rows belong to the current calculation**.
+
+This question specifically tests that understanding.
+
+---
+
+# Problem
+
+Table
+
+```text
+Customer
+
++------------+--------+
+| visited_on | amount |
++------------+--------+
+|2020-01-01  |100     |
+|2020-01-01  |20      |
+|2020-01-02  |80      |
+|2020-01-03  |150     |
+|2020-01-04  |40      |
+|2020-01-05  |110     |
+|2020-01-06  |120     |
+|2020-01-07  |90      |
+|2020-01-08  |70      |
++------------+--------+
+```
+
+Return
+
+For every day beginning from Day 7,
+
+- total revenue over the previous 7 days
+- average revenue over the previous 7 days
+
+---
+
+# Step 1 — Aggregate Per Day
+
+Notice
+
+There may be multiple purchases on the same day.
+
+Before using a window function, combine them.
+
+```sql
+SELECT
+
+visited_on,
+
+SUM(amount) AS daily_amount
+
+FROM Customer
+
+GROUP BY visited_on;
+```
+
+Result
+
+```text
++------------+--------------+
+|visited_on  |daily_amount  |
++------------+--------------+
+|Jan-01      |120           |
+|Jan-02      |80            |
+|Jan-03      |150           |
+|Jan-04      |40            |
+|Jan-05      |110           |
+|Jan-06      |120           |
+|Jan-07      |90            |
+|Jan-08      |70            |
+```
+
+---
+
+# Why Normal SUM() Doesn't Work
+
+If we write
+
+```sql
+SUM(daily_amount)
+```
+
+SQL computes one grand total.
+
+We instead want
+
+```text
+For each row
+
+↓
+
+Look backward exactly six rows
+
+↓
+
+Include current row
+
+↓
+
+Compute total
+```
+
+This is exactly what a **window frame** specifies.
+
+---
+
+# Understanding ROWS BETWEEN
+
+Frame
+
+```sql
+ROWS BETWEEN 6 PRECEDING
+
+AND CURRENT ROW
+```
+
+Read it literally.
+
+For every row,
+
+```
+Take
+
+6 previous rows
+
++
+
+current row
+
+=
+
+7 rows
+```
+
+---
+
+# Visualization
+
+Suppose
+
+```text
+Day
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+```
+
+When SQL reaches
+
+```text
+Day 7
+```
+
+The frame becomes
+
+```text
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+```
+
+When SQL reaches
+
+```text
+Day 8
+```
+
+The frame moves.
+
+```text
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+```
+
+Notice
+
+The frame slides one row at a time.
+
+Hence the name
+
+> Sliding Window.
+
+---
+
+# Execution Trace
+
+Daily Revenue
+
+```text
+120
+
+80
+
+150
+
+40
+
+110
+
+120
+
+90
+
+70
+```
+
+Window for Day 7
+
+```text
+120
+
+80
+
+150
+
+40
+
+110
+
+120
+
+90
+```
+
+Sum
+
+```text
+710
+```
+
+Average
+
+```text
+101.43
+```
+
+Window for Day 8
+
+```text
+80
+
+150
+
+40
+
+110
+
+120
+
+90
+
+70
+```
+
+Sum
+
+```text
+660
+```
+
+Average
+
+```text
+94.29
+```
+
+---
+
+# Complete Solution
+
+```sql
+WITH DailyRevenue AS
+(
+    SELECT
+
+        visited_on,
+
+        SUM(amount) AS daily_amount
+
+    FROM Customer
+
+    GROUP BY visited_on
+)
+
+SELECT
+
+visited_on,
+
+SUM(daily_amount)
+
+OVER(
+
+ORDER BY visited_on
+
+ROWS BETWEEN 6 PRECEDING
+
+AND CURRENT ROW
+
+) AS amount,
+
+ROUND(
+
+AVG(daily_amount)
+
+OVER(
+
+ORDER BY visited_on
+
+ROWS BETWEEN 6 PRECEDING
+
+AND CURRENT ROW
+
+),
+
+2
+
+) AS average_amount
+
+FROM DailyRevenue
+
+LIMIT 100000 OFFSET 6;
+```
+
+---
+
+# Why OFFSET 6?
+
+Days
+
+```text
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+```
+
+Do not yet have
+
+7 days
+
+of history.
+
+LeetCode asks us to begin output from
+
+Day 7.
+
+---
+
+# ROWS vs RANGE
+
+One of the most common FAANG follow-up questions.
+
+Suppose values are
+
+```text
+10
+
+10
+
+20
+
+30
+```
+
+---
+
+## ROWS
+
+```sql
+ROWS BETWEEN 1 PRECEDING
+
+AND CURRENT ROW
+```
+
+For
+
+second
+
+10
+
+Frame
+
+```text
+10
+
+10
+```
+
+Exactly
+
+one previous row.
+
+---
+
+## RANGE
+
+```sql
+RANGE BETWEEN 10 PRECEDING
+
+AND CURRENT ROW
+```
+
+Frame includes
+
+all rows
+
+whose values lie inside
+
+```text
+current_value - 10
+```
+
+Current value
+
+```text
+20
+```
+
+Frame
+
+```text
+10
+
+10
+
+20
+```
+
+Notice
+
+`RANGE` works on **values**.
+
+`ROWS` works on **physical rows**.
+
+---
+
+# Interview Rule
+
+If the problem says
+
+> Previous K rows
+
+Use
+
+```sql
+ROWS
+```
+
+If the problem says
+
+> Previous K dollars
+
+or
+
+> Previous K days by value
+
+Think
+
+```sql
+RANGE
+```
+
+---
+
+# LLM-Proof Variations
+
+### Variation 1
+
+30-day moving average
+
+```sql
+ROWS BETWEEN
+
+29 PRECEDING
+
+AND CURRENT ROW
+```
+
+---
+
+### Variation 2
+
+Rolling profit
+
+Replace
+
+```text
+amount
+```
+
+with
+
+```text
+profit
+```
+
+Nothing else changes.
+
+---
+
+### Variation 3
+
+Rolling average score per student
+
+Add
+
+```sql
+PARTITION BY student_id
+```
+
+inside the window.
+
+---
+
+# Common Mistakes
+
+### Mistake 1
+
+Using
+
+```sql
+SUM()
+
+GROUP BY
+```
+
+Produces one row per day.
+
+Cannot compute rolling totals.
+
+---
+
+### Mistake 2
+
+Using
+
+```sql
+RANGE
+```
+
+instead of
+
+```sql
+ROWS
+```
+
+Unexpected duplicate handling.
+
+---
+
+### Mistake 3
+
+Skipping daily aggregation.
+
+If one day has multiple transactions,
+
+window calculations become incorrect.
+
+---
+
+# Complexity
+
+Sorting dominates.
+
+```text
+Time
+
+O(N log N)
+```
+
+Space
+
+```text
+O(N)
+```
+
+---
+
+# Pattern Learned
+
+Whenever an interview asks
+
+- moving average
+- rolling revenue
+- previous K days
+- sliding totals
+- cumulative metrics
+
+Immediately think
+
+```sql
+OVER()
+
+ORDER BY
+
+ROWS BETWEEN
+```
+
+---
+
+---
+
+# Question 6 — Human Traffic of Stadium (LeetCode 601)
+
+**Difficulty**
+
+Hard
+
+**Companies**
+
+- Amazon ⭐⭐⭐⭐⭐
+- Google ⭐⭐⭐⭐
+- Meta ⭐⭐⭐⭐
+- Microsoft ⭐⭐⭐⭐
+- Apple
+- Airbnb
+- Uber
+
+**Topics Covered**
+
+- Gap and Island Pattern
+- `DENSE_RANK()`
+- Window Functions
+- Consecutive Rows
+- Sequence Detection
+
+This problem introduces one of the most valuable interview patterns:
+
+> **Gap and Island**
+
+Many interviewers expect candidates to recognize this pattern immediately.
+
+---
+
+# Problem
+
+Table
+
+```text
+Stadium
+
++----+------------+--------+
+| id | visit_date | people |
++----+------------+--------+
+|1   |2020-01-01  |10      |
+|2   |2020-01-02  |109     |
+|3   |2020-01-03  |150     |
+|4   |2020-01-04  |99      |
+|5   |2020-01-05  |145     |
+|6   |2020-01-06  |145     |
+|7   |2020-01-07  |145     |
++----+------------+--------+
+```
+
+Return all records that belong to
+
+at least
+
+three consecutive days
+
+where
+
+```text
+people >= 100
+```
+
+---
+
+# Step 1 — Remove Invalid Rows
+
+Keep only
+
+```text
+people >=100
+```
+
+Result
+
+```text
+id
+
+2
+
+3
+
+5
+
+6
+
+7
+```
+
+---
+
+# Step 2 — Find Consecutive Groups
+
+Observe
+
+```text
+2
+
+3
+```
+
+are consecutive.
+
+Then
+
+```text
+5
+
+6
+
+7
+```
+
+form another consecutive sequence.
+
+Need only
+
+```text
+5
+
+6
+
+7
+```
+
+because length ≥ 3.
+
+---
+
+# Key Observation
+
+For consecutive ids
+
+```text
+id
+
+5
+
+6
+
+7
+```
+
+Compute
+
+```text
+id
+
+-
+
+ROW_NUMBER()
+```
+
+Row numbers
+
+```text
+1
+
+2
+
+3
+```
+
+Difference
+
+```text
+5-1=4
+
+6-2=4
+
+7-3=4
+```
+
+Same value.
+
+Therefore,
+
+all belong to one island.
+
+---
+
+# Visualization
+
+```text
+id
+
+5
+
+6
+
+7
+```
+
+↓
+
+```text
+ROW_NUMBER
+
+1
+
+2
+
+3
+```
+
+↓
+
+```text
+id-row_number
+
+4
+
+4
+
+4
+```
+
+Equal values identify one consecutive block.
+
+---
+
+# Solution
+
+```sql
+WITH Filtered AS
+(
+SELECT *
+
+FROM Stadium
+
+WHERE people>=100
+),
+
+Grouped AS
+(
+SELECT
+
+*,
+
+id-
+
+ROW_NUMBER()
+
+OVER(
+
+ORDER BY id
+
+)
+
+AS grp
+
+FROM Filtered
+),
+
+FinalGroups AS
+(
+SELECT
+
+grp
+
+FROM Grouped
+
+GROUP BY grp
+
+HAVING COUNT(*)>=3
+)
+
+SELECT
+
+id,
+
+visit_date,
+
+people
+
+FROM Grouped
+
+WHERE grp IN
+
+(
+
+SELECT grp
+
+FROM FinalGroups
+
+)
+
+ORDER BY visit_date;
+```
+
+---
+
+# Execution Trace
+
+Filtered
+
+```text
+2
+
+3
+
+5
+
+6
+
+7
+```
+
+↓
+
+Row Numbers
+
+```text
+1
+
+2
+
+3
+
+4
+
+5
+```
+
+↓
+
+Difference
+
+```text
+1
+
+1
+
+2
+
+2
+
+2
+```
+
+↓
+
+Groups
+
+```text
+Group 1
+
+2
+
+3
+```
+
+```text
+Group 2
+
+5
+
+6
+
+7
+```
+
+↓
+
+Keep only
+
+```text
+Group 2
+```
+
+---
+
+# Why Does This Work?
+
+Consecutive ids increase by
+
+```text
++1
+```
+
+Row numbers also increase by
+
+```text
++1
+```
+
+Subtracting them keeps the value constant.
+
+As soon as a gap appears,
+
+the difference changes,
+
+creating a new island.
+
+---
+
+# LLM-Proof Variations
+
+### Variation 1
+
+Five consecutive login days
+
+Replace
+
+```text
+people
+```
+
+with
+
+```text
+login
+```
+
+Same algorithm.
+
+---
+
+### Variation 2
+
+Seven consecutive sales above $1000
+
+Filter
+
+```sql
+sales>=1000
+```
+
+No other change.
+
+---
+
+### Variation 3
+
+Detect machine uptime streaks.
+
+Replace
+
+```text
+visit_date
+```
+
+with
+
+```text
+timestamp
+```
+
+Keep identical logic.
+
+---
+
+### Variation 4
+
+Longest winning streak.
+
+Exactly the same Gap-and-Island pattern.
+
+---
+
+# Common Mistakes
+
+### Mistake 1
+
+Using
+
+```sql
+LAG()
+```
+
+Only compares adjacent rows.
+
+Cannot easily identify entire streaks.
+
+---
+
+### Mistake 2
+
+Using self joins.
+
+Solution becomes unnecessarily complex.
+
+---
+
+### Mistake 3
+
+Grouping directly by date.
+
+Destroys the sequence information.
+
+---
+
+# Complexity
+
+```text
+Time
+
+O(N log N)
+```
+
+Sorting dominates.
+
+```text
+Space
+
+O(N)
+```
+
+---
+
+# Pattern Learned
+
+Whenever you encounter
+
+- consecutive events
+- winning streaks
+- login streaks
+- uptime streaks
+- attendance streaks
+- transaction sequences
+
+Think immediately about the **Gap-and-Island** technique using window functions.
+
+---
+
+
+
+---
+
+# Window Function Cheat Sheet
+
+This section summarizes the patterns that repeatedly appear in FAANG SQL interviews. The goal is not to memorize syntax, but to recognize **which window function fits which problem**.
+
+---
+
+# Decision Tree
+
+```text
+                             SQL Problem
+                                  │
+                 ┌────────────────┴────────────────┐
+                 │                                 │
+          Need Ranking?                     Need Previous Row?
+                 │                                 │
+        Use Ranking Functions                Use LAG()
+                 │
+        ┌────────┴────────┐
+        │                 │
+ Need Unique Rank?   Need Same Rank?
+        │                 │
+ ROW_NUMBER()        DENSE_RANK()
+                          │
+                    Need Gaps?
+                          │
+                        RANK()
+
+```
+
+---
+
+```text
+Need Running Total?
+
+↓
+
+SUM()
+
+OVER(
+
+ORDER BY ...
+)
+
+```
+
+---
+
+```text
+Need Moving Average?
+
+↓
+
+AVG()
+
+OVER(
+
+ORDER BY ...
+
+ROWS BETWEEN ...
+
+)
+
+```
+
+---
+
+```text
+Need Consecutive Records?
+
+↓
+
+Gap & Island
+
+or
+
+LAG()
+
+```
+
+---
+
+```text
+Need Top K Per Group?
+
+↓
+
+PARTITION BY
+
++
+
+DENSE_RANK()
+
+```
+
+---
+
+# Ranking Functions Comparison
+
+| Feature | ROW_NUMBER() | RANK() | DENSE_RANK() |
+|----------|--------------|---------|--------------|
+|Duplicates share rank?|❌|✅|✅|
+|Ranking gaps?|❌|✅|❌|
+|Every row unique?|✅|❌|❌|
+|Top K Distinct?|❌|⚠️|✅|
+|Leaderboard?|❌|✅|✅|
+|LeetCode favorite?|Medium|Medium|★★★★★|
+
+---
+
+Example
+
+Input
+
+```text
+100
+
+100
+
+90
+
+80
+
+80
+
+70
+```
+
+ROW_NUMBER()
+
+```text
+100 → 1
+
+100 → 2
+
+90 → 3
+
+80 → 4
+
+80 → 5
+
+70 → 6
+```
+
+---
+
+RANK()
+
+```text
+100 → 1
+
+100 → 1
+
+90 → 3
+
+80 → 4
+
+80 → 4
+
+70 → 6
+```
+
+---
+
+DENSE_RANK()
+
+```text
+100 → 1
+
+100 → 1
+
+90 → 2
+
+80 → 3
+
+80 → 3
+
+70 → 4
+```
+
+---
+
+# Complete Window Function Syntax
+
+```sql
+window_function()
+
+OVER
+(
+    PARTITION BY ...
+
+    ORDER BY ...
+
+    ROWS BETWEEN ...
+)
+```
+
+Remember
+
+Every component is optional except
+
+```sql
+OVER()
+```
+
+Different interview problems activate different parts.
+
+---
+
+# OVER()
+
+Purpose
+
+```text
+Apply calculation
+
+without collapsing rows.
+```
+
+Example
+
+```sql
+SUM(salary)
+
+OVER()
+```
+
+Output
+
+```text
+Every row contains
+
+the overall salary total.
+```
+
+---
+
+# PARTITION BY
+
+Purpose
+
+```text
+Divide data
+
+into independent groups.
+```
+
+Visualization
+
+```text
+Employees
+
+↓
+
+IT
+
+↓
+
+Sales
+
+↓
+
+Marketing
+```
+
+Each partition behaves like a separate table.
+
+---
+
+Example
+
+```sql
+DENSE_RANK()
+
+OVER(
+
+PARTITION BY department_id
+
+ORDER BY salary DESC
+
+)
+```
+
+Ranking restarts
+
+inside each department.
+
+---
+
+# ORDER BY
+
+Purpose
+
+Defines the sequence used by the window function.
+
+Without
+
+```sql
+ORDER BY
+```
+
+Running totals
+
+cannot exist.
+
+Example
+
+```sql
+SUM(amount)
+
+OVER(
+
+ORDER BY order_date
+
+)
+```
+
+Each row accumulates previous rows.
+
+---
+
+# ROWS Frame
+
+Frame determines
+
+which rows participate.
+
+Example
+
+```sql
+ROWS BETWEEN
+
+2 PRECEDING
+
+AND CURRENT ROW
+```
+
+Current Row
+
+```text
+5
+```
+
+Frame
+
+```text
+3
+
+4
+
+5
+```
+
+Exactly
+
+three physical rows.
+
+---
+
+# RANGE Frame
+
+Frame determined
+
+by values,
+
+not row positions.
+
+Example
+
+```sql
+RANGE BETWEEN
+
+100 PRECEDING
+
+AND CURRENT ROW
+```
+
+Current value
+
+```text
+500
+```
+
+Frame
+
+```text
+400–500
+```
+
+Every value
+
+inside this range
+
+is included.
+
+---
+
+# Most Important Window Functions
+
+## ROW_NUMBER()
+
+Interview usage
+
+- Pagination
+- Remove duplicates
+- Unique ordering
+
+---
+
+## RANK()
+
+Interview usage
+
+- Competition ranking
+
+Example
+
+```text
+Gold Medal
+
+Silver Medal
+
+Silver Medal
+
+Fourth Place
+```
+
+Notice skipped rank.
+
+---
+
+## DENSE_RANK()
+
+Interview usage
+
+- Top K
+- Highest Salary
+- Department Ranking
+- Score Ranking
+
+Most commonly asked.
+
+---
+
+## LAG()
+
+Returns
+
+previous row.
+
+Used for
+
+- Consecutive values
+- Trend analysis
+- Previous transaction
+- Day-over-day comparison
+
+---
+
+## LEAD()
+
+Returns
+
+next row.
+
+Used for
+
+- Future comparison
+- Session analysis
+- Time intervals
+
+---
+
+## SUM()
+
+Running total
+
+```sql
+SUM(amount)
+
+OVER(
+
+ORDER BY date
+
+)
+```
+
+---
+
+## AVG()
+
+Moving average
+
+```sql
+AVG(price)
+
+OVER(
+
+ORDER BY date
+
+ROWS BETWEEN
+
+6 PRECEDING
+
+AND CURRENT ROW
+)
+```
+
+---
+
+## COUNT()
+
+Running count
+
+```sql
+COUNT(*)
+
+OVER(
+
+ORDER BY date
+)
+```
+
+---
+
+## MIN()
+
+Lowest value
+
+inside frame.
+
+---
+
+## MAX()
+
+Highest value
+
+inside frame.
+
+---
+
+# Frequently Asked FAANG Interview Patterns
+
+| Pattern | Window Function |
+|----------|----------------|
+|Highest Salary|DENSE_RANK()|
+|Nth Highest Salary|DENSE_RANK()|
+|Department Ranking|PARTITION BY + DENSE_RANK()|
+|Running Revenue|SUM()|
+|Moving Average|AVG() + ROWS|
+|Consecutive Events|LAG()|
+|Winning Streak|Gap & Island|
+|Top K Per Category|PARTITION BY + DENSE_RANK()|
+|Previous Transaction|LAG()|
+|Next Purchase|LEAD()|
+|Session Analysis|LAG() / LEAD()|
+|Leaderboard|RANK() / DENSE_RANK()|
+
+---
+
+# Common Mistakes
+
+## Mistake 1
+
+Using
+
+```sql
+GROUP BY
+```
+
+instead of
+
+```sql
+OVER()
+```
+
+Result
+
+Rows disappear.
+
+---
+
+## Mistake 2
+
+Using
+
+```sql
+ROW_NUMBER()
+```
+
+for Top K.
+
+Fails duplicate tests.
+
+---
+
+## Mistake 3
+
+Ignoring duplicates.
+
+Interviewers intentionally include duplicate salaries.
+
+---
+
+## Mistake 4
+
+Using
+
+```sql
+LIMIT
+```
+
+inside grouped ranking questions.
+
+Returns Top K globally.
+
+Not
+
+Top K per department.
+
+---
+
+## Mistake 5
+
+Forgetting
+
+```sql
+PARTITION BY
+```
+
+Entire table gets ranked.
+
+Department ranking becomes incorrect.
+
+---
+
+## Mistake 6
+
+Using
+
+```sql
+RANGE
+```
+
+when question asks
+
+Previous K rows.
+
+Should be
+
+```sql
+ROWS
+```
+
+---
+
+## Mistake 7
+
+Skipping
+
+daily aggregation
+
+before moving averages.
+
+Multiple transactions per day produce incorrect windows.
+
+---
+
+# Window Functions vs GROUP BY
+
+| Feature | GROUP BY | Window Function |
+|----------|----------|-----------------|
+|Keeps all rows?|❌|✅|
+|Ranking?|❌|✅|
+|Running total?|❌|✅|
+|Moving average?|❌|✅|
+|Top K per group?|⚠️ Difficult|✅|
+|Previous row?|❌|✅|
+|Next row?|❌|✅|
+
+---
+
+Visualization
+
+GROUP BY
+
+```text
+100
+
+200
+
+300
+
+↓
+
+600
+```
+
+Rows disappear.
+
+---
+
+Window Function
+
+```text
+100
+
+200
+
+300
+
+↓
+
+100
+
+200
+
+300
+```
+
+Rows remain.
+
+---
+
+# SQL Execution Order
+
+One of the most common interview follow-up questions.
+
+Logical order
+
+```text
+FROM
+
+↓
+
+WHERE
+
+↓
+
+GROUP BY
+
+↓
+
+HAVING
+
+↓
+
+WINDOW FUNCTIONS
+
+↓
+
+SELECT
+
+↓
+
+ORDER BY
+
+↓
+
+LIMIT
+```
+
+Important implication
+
+Window functions
+
+cannot be used
+
+inside
+
+```sql
+WHERE
+```
+
+Wrong
+
+```sql
+SELECT *
+
+FROM Employee
+
+WHERE
+
+DENSE_RANK()
+
+OVER(
+
+ORDER BY salary DESC
+
+)=1;
+```
+
+Correct
+
+```sql
+WITH Ranked AS
+(
+SELECT *,
+
+DENSE_RANK()
+
+OVER(
+
+ORDER BY salary DESC
+
+) AS r
+
+FROM Employee
+)
+
+SELECT *
+
+FROM Ranked
+
+WHERE r=1;
+```
+
+---
+
+# Interview Checklist
+
+Before writing SQL, ask yourself:
+
+- Is ranking required?
+- Is Top K inside each group?
+- Do duplicate values matter?
+- Is row order important?
+- Do I need previous or next rows?
+- Is this a running total?
+- Is this a moving window?
+- Do I need all rows or grouped rows?
+- Is there a streak or consecutive pattern?
+- Should I use `ROWS` or `RANGE`?
+
+---
+
+# Practice Roadmap
+
+## Beginner
+
+- LeetCode 178 — Rank Scores
+- LeetCode 177 — Nth Highest Salary
+- LeetCode 180 — Consecutive Numbers
+
+Focus
+
+- `OVER()`
+- `ORDER BY`
+- `DENSE_RANK()`
+- `LAG()`
+
+---
+
+## Intermediate
+
+- LeetCode 185 — Department Top Three Salaries
+- LeetCode 1321 — Restaurant Growth
+
+Focus
+
+- `PARTITION BY`
+- Running totals
+- Moving averages
+- Window frames
+
+---
+
+## Advanced
+
+- LeetCode 601 — Human Traffic of Stadium
+
+Focus
+
+- Gap & Island
+- Consecutive sequences
+- Multi-CTE solutions
+- Window-function composition
+
+---
+
+# FAANG Interview Frequency
+
+| Topic | Frequency |
+|--------|-----------|
+|Ranking Functions|★★★★★|
+|Top K Per Group|★★★★★|
+|Running Totals|★★★★★|
+|Moving Average|★★★★☆|
+|Previous/Next Row|★★★★☆|
+|Gap & Island|★★★★★|
+|Window Frames|★★★★☆|
+|ROWS vs RANGE|★★★★☆|
+|Lead/Lag Analytics|★★★★☆|
+
+---
+
+# Final Summary
+
+After mastering the six problems in this guide, you should be able to recognize and solve the majority of Window Function interview questions.
+
+Core mappings:
+
+| Interview Prompt | Primary Technique |
+|------------------|-------------------|
+|Rank employees|`DENSE_RANK()`|
+|Unique ordering|`ROW_NUMBER()`|
+|Competition ranking|`RANK()`|
+|Top K per department|`PARTITION BY` + `DENSE_RANK()`|
+|Running revenue|`SUM() OVER()`|
+|Moving average|`AVG() OVER() + ROWS BETWEEN`|
+|Previous row comparison|`LAG()`|
+|Next row comparison|`LEAD()`|
+|Consecutive events|Gap & Island / `LAG()`|
+|Rolling metrics|Window Frame (`ROWS`)|
+
+A useful interview heuristic is:
+
+```text
+Need to preserve every row?
+
+↓
+
+Think Window Function.
+
+Need Top K inside groups?
+
+↓
+
+Think PARTITION BY + DENSE_RANK().
+
+Need rolling calculations?
+
+↓
+
+Think ORDER BY + ROWS BETWEEN.
+
+Need streaks or consecutive events?
+
+↓
+
+Think LAG() or Gap & Island.
+```
+
+With these patterns, you can solve not only the featured LeetCode problems but also many interview variants involving leaderboards, event streams, transaction histories, login streaks, financial analytics, and time-series data.
+
+---
