@@ -10,7 +10,7 @@ This topic covers the fundamentals of retrieving and filtering data using `SELEC
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [ ] | 1757. Recyclable and Low Fat Products |
+| - [y] | 1757. Recyclable and Low Fat Products |
 | - [ ] | 584. Find Customer Referee |
 | - [ ] | 1527. Patients With a Condition |
 | - [ ] | 595. Big Countries |
