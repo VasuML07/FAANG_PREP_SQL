@@ -13,7 +13,7 @@ This topic covers the fundamentals of retrieving and filtering data using `SELEC
 | - [y] | 1757. Recyclable and Low Fat Products |
 | - [y] | 584. Find Customer Referee |
 | - [y] | 1527. Patients With a Condition |
-| - [ ] | 595. Big Countries |
+| - [y] | 595. Big Countries |
 | - [ ] | 183. Customers Who Never Order |
 | - [ ] | 1173. Immediate Food Delivery I |
 
