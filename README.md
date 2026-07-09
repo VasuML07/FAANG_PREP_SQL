@@ -14,7 +14,7 @@ This topic covers the fundamentals of retrieving and filtering data using `SELEC
 | - [y] | 584. Find Customer Referee |
 | - [y] | 1527. Patients With a Condition |
 | - [y] | 595. Big Countries |
-| - [ ] | 183. Customers Who Never Order |
+| - [y] | 183. Customers Who Never Order |
 | - [ ] | 1173. Immediate Food Delivery I |
 
 # SQL Joins (INNER, LEFT, RIGHT, FULL OUTER, CROSS)
