@@ -32,7 +32,7 @@ This topic covers the most important SQL JOIN patterns used in LeetCode and tech
 | - [y] | 175. Combine Two Tables |
 | - [y] | 181. Employees Earning More Than Their Managers |
 | - [y] | 197. Rising Temperature |
-| - [ ] | 570. Managers with at Least 5 Direct Reports |
+| - [y] | 570. Managers with at Least 5 Direct Reports |
 | - [ ] | 1068. Product Sales Analysis I |
 | - [ ] | 1581. Customer Who Visited but Did Not Make Any Transactions |
 
