@@ -34,7 +34,7 @@ This topic covers the most important SQL JOIN patterns used in LeetCode and tech
 | - [y] | 197. Rising Temperature |
 | - [y] | 570. Managers with at Least 5 Direct Reports |
 | - [y] | 1068. Product Sales Analysis I |
-| - [ ] | 1581. Customer Who Visited but Did Not Make Any Transactions |
+| - [y] | 1581. Customer Who Visited but Did Not Make Any Transactions |
 
 # SQL GROUP BY & HAVING
 
