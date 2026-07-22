@@ -48,7 +48,7 @@ This topic focuses on grouping data with `GROUP BY` and filtering aggregated res
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [ ] | 586. Customer Placing the Largest Number of Orders |
+| - [y] | 586. Customer Placing the Largest Number of Orders |
 | - [ ] | 596. Classes More Than 5 Students |
 | - [ ] | 184. Department Highest Salary |
 | - [ ] | 1934. Confirmation Rate |
