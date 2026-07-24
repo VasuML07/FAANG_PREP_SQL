@@ -50,7 +50,7 @@ This topic focuses on grouping data with `GROUP BY` and filtering aggregated res
 |:------:|-------------------|
 | - [y] | 586. Customer Placing the Largest Number of Orders |
 | - [y] | 596. Classes More Than 5 Students |
-| - [ ] | 184. Department Highest Salary |
+| - [y] | 184. Department Highest Salary |
 | - [ ] | 1934. Confirmation Rate |
 | - [ ] | 570. Managers with at Least 5 Direct Reports |
 | - [ ] | 601. Human Traffic of Stadium |
