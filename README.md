@@ -52,7 +52,7 @@ This topic focuses on grouping data with `GROUP BY` and filtering aggregated res
 | - [y] | 596. Classes More Than 5 Students |
 | - [y] | 184. Department Highest Salary |
 | - [y] | 1934. Confirmation Rate |
-| - [ ] | 570. Managers with at Least 5 Direct Reports |
+| - [y] | 570. Managers with at Least 5 Direct Reports |
 | - [ ] | 601. Human Traffic of Stadium |
 
 # Subqueries (Correlated & Non-Correlated)
