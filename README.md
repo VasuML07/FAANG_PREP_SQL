@@ -15,7 +15,6 @@ This topic covers the fundamentals of retrieving and filtering data using `SELEC
 | - [y] | 1527. Patients With a Condition |
 | - [y] | 595. Big Countries |
 | - [y] | 183. Customers Who Never Order |
-| - [ ] | 1173. Immediate Food Delivery I |
 
 # SQL Joins (INNER, LEFT, RIGHT, FULL OUTER, CROSS)
 
@@ -67,7 +66,7 @@ This topic covers correlated and non-correlated subqueries used in SQL interview
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [ ] | 181. Employees Earning More Than Their Managers |
+| - [y] | 181. Employees Earning More Than Their Managers |
 | - [ ] | 184. Department Highest Salary |
 | - [ ] | 197. Rising Temperature |
 | - [ ] | 183. Customers Who Never Order |
