@@ -67,7 +67,7 @@ This topic covers correlated and non-correlated subqueries used in SQL interview
 | Status | LeetCode Question |
 |:------:|-------------------|
 | - [y] | 181. Employees Earning More Than Their Managers |
-| - [ ] | 184. Department Highest Salary |
+| - [y] | 184. Department Highest Salary |
 | - [ ] | 197. Rising Temperature |
 | - [ ] | 183. Customers Who Never Order |
 | - [ ] | 176. Second Highest Salary |
