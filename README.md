@@ -68,7 +68,7 @@ This topic covers correlated and non-correlated subqueries used in SQL interview
 |:------:|-------------------|
 | - [y] | 181. Employees Earning More Than Their Managers |
 | - [y] | 184. Department Highest Salary |
-| - [ ] | 197. Rising Temperature |
+| - [y] | 197. Rising Temperature |
 | - [ ] | 183. Customers Who Never Order |
 | - [ ] | 176. Second Highest Salary |
 
