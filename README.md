@@ -1,3 +1,6 @@
+### 📈 Progress Bar
+<progress value="22" max="76"></progress> **28.95%** (22 / 76)
+
 # Basic SELECT & WHERE
 
 ## README
