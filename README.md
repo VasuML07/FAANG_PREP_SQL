@@ -70,7 +70,7 @@ This topic covers correlated and non-correlated subqueries used in SQL interview
 | - [y] | 184. Department Highest Salary |
 | - [y] | 197. Rising Temperature |
 | - [y] | 183. Customers Who Never Order |
-| - [ ] | 176. Second Highest Salary |
+| - [y] | 176. Second Highest Salary |
 
 # Common Table Expressions (CTEs)
 
