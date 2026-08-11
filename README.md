@@ -1,5 +1,5 @@
 ### 📈 Progress Bar
-<progress value="23" max="76"></progress> **30.26%** (23 / 76)
+<progress value="24" max="76"></progress> **31.57%** (24 / 76)
 
 # Basic SELECT & WHERE
 
@@ -88,7 +88,7 @@ This topic covers Common Table Expressions (CTEs), including multi-step query de
 | Status | LeetCode Question |
 |:------:|-------------------|
 | - [y] | 181. Employees Earning More Than Their Managers |
-| - [ ] | 185. Department Top Three Salaries |
+| - [y]| 185. Department Top Three Salaries |
 | - [ ] | 601. Human Traffic of Stadium |
 | - [ ] | 180. Consecutive Numbers |
 | - [ ] | 608. Tree Node |
