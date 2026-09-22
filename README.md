@@ -1,5 +1,5 @@
 ### 📈 Progress Bar
-<progress value="24" max="76"></progress> **32.89%** (24 / 76)
+<progress value="24" max="76"></progress> **0.0%** (0/ 76)
 
 # Basic SELECT & WHERE
 
@@ -13,11 +13,11 @@ This topic covers the fundamentals of retrieving and filtering data using `SELEC
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [y] | 1757. Recyclable and Low Fat Products |
-| - [y] | 584. Find Customer Referee |
-| - [y] | 1527. Patients With a Condition |
-| - [y] | 595. Big Countries |
-| - [y] | 183. Customers Who Never Order |
+| - [ ] | 1757. Recyclable and Low Fat Products |
+| - [ ] | 584. Find Customer Referee |
+| - [ ] | 1527. Patients With a Condition |
+| - [ ] | 595. Big Countries |
+| - [ ] | 183. Customers Who Never Order |
 
 # SQL Joins (INNER, LEFT, RIGHT, FULL OUTER, CROSS)
 
@@ -31,12 +31,12 @@ This topic covers the most important SQL JOIN patterns used in LeetCode and tech
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [y] | 175. Combine Two Tables |
-| - [y] | 181. Employees Earning More Than Their Managers |
-| - [y] | 197. Rising Temperature |
-| - [y] | 570. Managers with at Least 5 Direct Reports |
-| - [y] | 1068. Product Sales Analysis I |
-| - [y] | 1581. Customer Who Visited but Did Not Make Any Transactions |
+| - [ ] | 175. Combine Two Tables |
+| - [ ] | 181. Employees Earning More Than Their Managers |
+| - [ ] | 197. Rising Temperature |
+| - [ ] | 570. Managers with at Least 5 Direct Reports |
+| - [ ] | 1068. Product Sales Analysis I |
+| - [ ] | 1581. Customer Who Visited but Did Not Make Any Transactions |
 
 # SQL GROUP BY & HAVING
 
@@ -50,12 +50,12 @@ This topic focuses on grouping data with `GROUP BY` and filtering aggregated res
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [y] | 586. Customer Placing the Largest Number of Orders |
-| - [y] | 596. Classes More Than 5 Students |
-| - [y] | 184. Department Highest Salary |
-| - [y] | 1934. Confirmation Rate |
-| - [y] | 570. Managers with at Least 5 Direct Reports |
-| - [Y] | 601. Human Traffic of Stadium |
+| - [ ] | 586. Customer Placing the Largest Number of Orders |
+| - [ ] | 596. Classes More Than 5 Students |
+| - [ ] | 184. Department Highest Salary |
+| - [ ] | 1934. Confirmation Rate |
+| - [ ] | 570. Managers with at Least 5 Direct Reports |
+| - [ ] | 601. Human Traffic of Stadium |
 
 # Subqueries (Correlated & Non-Correlated)
 
@@ -69,11 +69,11 @@ This topic covers correlated and non-correlated subqueries used in SQL interview
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [y] | 181. Employees Earning More Than Their Managers |
-| - [y] | 184. Department Highest Salary |
-| - [y] | 197. Rising Temperature |
-| - [y] | 183. Customers Who Never Order |
-| - [y] | 176. Second Highest Salary |
+| - [ ] | 181. Employees Earning More Than Their Managers |
+| - [ ] | 184. Department Highest Salary |
+| - [ ] | 197. Rising Temperature |
+| - [ ] | 183. Customers Who Never Order |
+| - [ ] | 176. Second Highest Salary |
 
 # Common Table Expressions (CTEs)
 
@@ -87,9 +87,9 @@ This topic covers Common Table Expressions (CTEs), including multi-step query de
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [y] | 181. Employees Earning More Than Their Managers |
-| - [y]| 185. Department Top Three Salaries |
-| - [y] | 601. Human Traffic of Stadium |
+| - [ ] | 181. Employees Earning More Than Their Managers |
+| - [ ]| 185. Department Top Three Salaries |
+| - [ ] | 601. Human Traffic of Stadium |
 | - [ ] | 180. Consecutive Numbers |
 | - [ ] | 608. Tree Node |
 | - [ ] | 626. Exchange Seats |
