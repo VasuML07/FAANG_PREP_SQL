@@ -1,5 +1,5 @@
 ### 📈 Progress Bar
-<progress value="24" max="76"></progress> **1.32%** (1/ 76)
+<progress value="24" max="76"></progress> **2.63%** (2/ 76)
 # Basic SELECT & WHERE
 
 ## README
@@ -13,7 +13,7 @@ This topic covers the fundamentals of retrieving and filtering data using `SELEC
 | Status | LeetCode Question |
 |:------:|-------------------|
 | - [y] | 1757. Recyclable and Low Fat Products |
-| - [ ] | 584. Find Customer Referee |
+| - [y] | 584. Find Customer Referee |
 | - [ ] | 1527. Patients With a Condition |
 | - [ ] | 595. Big Countries |
 | - [ ] | 183. Customers Who Never Order |
