@@ -1,5 +1,5 @@
 ### 📈 Progress Bar
-<progress value="24" max="76"></progress> **5.26%** (4/ 76)
+<progress value="24" max="76"></progress> **6.58%** ( 5 / 76)
 # Basic SELECT & WHERE
 
 ## README
@@ -16,7 +16,7 @@ This topic covers the fundamentals of retrieving and filtering data using `SELEC
 | - [y] | 584. Find Customer Referee |
 | - [y] | 1527. Patients With a Condition |
 | - [y] | 595. Big Countries |
-| - [ ] | 183. Customers Who Never Order |
+| - [y] | 183. Customers Who Never Order |
 
 # SQL Joins (INNER, LEFT, RIGHT, FULL OUTER, CROSS)
 
