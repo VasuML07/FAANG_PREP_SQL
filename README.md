@@ -1,5 +1,5 @@
 ### 📈 Progress Bar
-<progress value="24" max="76"></progress> **6.58%** ( 5 / 76)
+<progress value="24" max="76"></progress> **7.9%** ( 6 / 76)
 # Basic SELECT & WHERE
 
 ## README
@@ -30,7 +30,7 @@ This topic covers the most important SQL JOIN patterns used in LeetCode and tech
 
 | Status | LeetCode Question |
 |:------:|-------------------|
-| - [ ] | 175. Combine Two Tables |
+| - [y] | 175. Combine Two Tables |
 | - [ ] | 181. Employees Earning More Than Their Managers |
 | - [ ] | 197. Rising Temperature |
 | - [ ] | 570. Managers with at Least 5 Direct Reports |
